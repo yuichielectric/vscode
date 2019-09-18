@@ -58,7 +58,7 @@ jobs:
         uses: actions/upload-artifact@master
         with:
           name: linux-test-result
-          path: test-result/*-results.xml
+          path: test-results/*-results.xml
     # - task: PublishTestResults@2
     #   displayName: Publish Tests Results
     #   inputs:
