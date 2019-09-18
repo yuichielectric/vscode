@@ -19,7 +19,7 @@ jobs:
       - name: "Use Node.js 10.x"
         uses: actions/setup-node@master
         with:
-          version: "10.15.1"
+          node-version: "10.15.1"
 
       # - task: 1ESLighthouseEng.PipelineArtifactCaching.RestoreCacheV1.RestoreCache@1
       #   inputs:
