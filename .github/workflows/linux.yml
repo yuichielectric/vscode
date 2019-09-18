@@ -54,11 +54,6 @@ jobs:
         run: DISPLAY=:10 ./scripts/test.sh --tfs "Unit Tests"
       - name: "Run Integration Tests"
         run: DISPLAY=:10 ./scripts/test-integration.sh --tfs "Integration Tests"
-      - name: "Publish Tests Results"
-        uses: actions/upload-artifact@master
-        with:
-          name: linux-test-result
-          path: test-results/*-results.xml
     # - task: PublishTestResults@2
     #   displayName: Publish Tests Results
     #   inputs:
