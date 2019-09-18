@@ -1,0 +1,68 @@
+name: Linux
+
+on: pull_request
+
+jobs:
+  CI:
+    name: 'Continuous Build on Linux'
+    runs-on: ubuntu-latest
+    steps:
+  - script:
+    - uses: actions/checkout@master
+    - run: |
+        set -e
+        sudo apt-get update
+        sudo apt-get install -y libxkbfile-dev pkg-config libsecret-1-dev libxss1 dbus xvfb libgtk-3-0
+        sudo cp build/azure-pipelines/linux/xvfb.init /etc/init.d/xvfb
+        sudo chmod +x /etc/init.d/xvfb
+        sudo update-rc.d xvfb defaults
+        sudo service xvfb start
+    - name: 'Use Node.js 10.x'
+      uses: actions/setup-node@master
+      with:
+        version: '10.15.1'
+
+  # - task: 1ESLighthouseEng.PipelineArtifactCaching.RestoreCacheV1.RestoreCache@1
+  #   inputs:
+  #     keyfile: ".yarnrc, remote/.yarnrc, **/yarn.lock, !**/node_modules/**/yarn.lock, !**/.*/**/yarn.lock"
+  #     targetfolder: "**/node_modules, !**/node_modules/**/node_modules"
+  #     vstsFeed: "$(ArtifactFeed)"
+
+  # - task: geeklearningio.gl-vsts-tasks-yarn.yarn-installer-task.YarnInstaller@2
+  #   inputs:
+  #     versionSpec: "1.x"
+
+    - name: 'Install Dependencies'
+      run: yarn --frozen-lockfile
+      # condition: and(succeeded(), ne(variables['CacheRestored'], 'true'))
+
+    # - task: 1ESLighthouseEng.PipelineArtifactCaching.SaveCacheV1.SaveCache@1
+    #   inputs:
+    #     keyfile: ".yarnrc, remote/.yarnrc, **/yarn.lock, !**/node_modules/**/yarn.lock, !**/.*/**/yarn.lock"
+    #     targetfolder: "**/node_modules, !**/node_modules/**/node_modules"
+    #     vstsFeed: "$(ArtifactFeed)"
+    #   condition: and(succeeded(), ne(variables['CacheRestored'], 'true'))
+
+    - name: 'Download Electron'
+      run: yarn gulp electron-x64
+    - name: 'Run Hygiene Checks'
+      run: yarn gulp hygiene --skip-tslint
+    - name: 'Run TSLint Checks'
+      run: yarn gulp tslint
+    - name: 'Run Monaco Editor Checks'
+      run: yarn monaco-compile-check
+    - name: 'Compile Sources'
+      run: yarn compile
+    - name: 'Download Built-in Extensions'
+      run: yarn download-builtin-extensions
+    - name: 'Run Unit Tests'
+      run: DISPLAY=:10 ./scripts/test.sh --tfs "Unit Tests"
+    - name: 'Run Integration Tests'
+      run: DISPLAY=:10 ./scripts/test-integration.sh --tfs "Integration Tests"
+
+  # - task: PublishTestResults@2
+  #   displayName: Publish Tests Results
+  #   inputs:
+  #     testResultsFiles: "*-results.xml"
+  #     searchFolder: "$(Build.ArtifactStagingDirectory)/test-results"
+  #   condition: succeededOrFailed()
