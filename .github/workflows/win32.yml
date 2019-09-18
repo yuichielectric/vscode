@@ -47,9 +47,9 @@ jobs:
       - name: "Download Built-in Extensions"
         run: yarn download-builtin-extensions
       - name: "Run Unit Tests"
-        run: ./scripts/test.sh --tfs "Unit Tests"
+        run: .\scripts\test.bat --tfs "Unit Tests"
       - name: "Run Integration Tests"
-        run: ./scripts/test-integration.bat --tfs "Integration Tests"
+        run: .\scripts\test-integration.bat --tfs "Integration Tests"
     # - task: PublishTestResults@2
     #   displayName: Publish Tests Results
     #   inputs:
