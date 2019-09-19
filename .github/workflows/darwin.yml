@@ -12,16 +12,13 @@ jobs:
         uses: actions/setup-node@master
         with:
           node-version: "10.15.1"
-
       # - task: 1ESLighthouseEng.PipelineArtifactCaching.RestoreCacheV1.RestoreCache@1
       #   inputs:
       #     keyfile: ".yarnrc, remote/.yarnrc, **/yarn.lock, !**/node_modules/**/yarn.lock, !**/.*/**/yarn.lock"
       #     targetfolder: "**/node_modules, !**/node_modules/**/node_modules"
       #     vstsFeed: "$(ArtifactFeed)"
-
       - name: "Install Dependencies"
         run: yarn --frozen-lockfile
-
         # condition: and(succeeded(), ne(variables['CacheRestored'], 'true'))
       # - task: 1ESLighthouseEng.PipelineArtifactCaching.SaveCacheV1.SaveCache@1
       #   inputs:
@@ -29,7 +26,6 @@ jobs:
       #     targetfolder: "**/node_modules, !**/node_modules/**/node_modules"
       #     vstsFeed: "$(ArtifactFeed)"
       #   condition: and(succeeded(), ne(variables['CacheRestored'], 'true'))
-
       - name: "Download Electron"
         run: yarn gulp electron-x64
       - name: "Run Hygiene Checks"
